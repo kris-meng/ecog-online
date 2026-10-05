@@ -77,11 +77,11 @@ detection is about 1.8 per minute. Read the event columns as counts.
 
 - **Open hand cannot be told from rest.** The glove barely moves (open hand is within 0.02
   of the resting posture on every finger), and no channel, band or moment separates open
-  hand from the same trial's own pre-cue rest (`open_vs_rest.svg`). Fist and peace are
+  hand from the same trial's own pre-cue rest. Fist and peace are
   separable at 0.96-1.00. Most 4-class errors are open hand called rest.
 - **Onset lag.** In the first 0.5 s after movement onset only 14-23 % of fist and peace steps
   are right. Leaving out ±0.25 s around every label change adds about 5 points everywhere.
-- **Speed against false alarms.** Shorter delays cost false alarms (`tradeoff.svg`).
+- **Speed against false alarms.** Shorter delays cost false alarms.
 - **The CNN classifies steps best but fires fewer clean events.** Its gesture probabilities
   stay near 0.35 during rest where logistic regression's sit near 0.2, so a threshold
   detector needs a stricter setting and misses more gestures.
@@ -130,10 +130,10 @@ python3 -m ecog_online.demo_export             # data for the 3D demo
 `python3 -m ecog_online.final --i-mean-it` scores the held-out test set. It refuses to run
 a second time once `results/online/final.json` exists.
 
-Every script has its configuration at the top, fixed seeds, and writes JSON to
-`results/online/`. Figures are drawn only from those files. Out-of-fold predictions are
-in `results/online/oof/` and held-out ones in `results/online/final/`. Feature caches
-(`results/online/cache/`, about 230 MB) are rebuilt on first use and are not committed.
+Every script has its configuration at the top and fixed seeds, and writes its results
+(JSON, saved predictions, figures) to `results/online/`. Figures are drawn only from those
+files. Only the demo is committed; run the scripts to regenerate everything else. Feature
+caches (`results/online/cache/`, about 230 MB) are rebuilt on first use.
 
 ## The demo
 
@@ -162,7 +162,8 @@ system fonts without a connection.
 The page opens paused just before a correctly detected fist.
 
 The current export replays logistic regression (1.5 s) for gestures and ridge (1.5 s) for fingers
-over the development trials. To show other saved runs:
+over the development trials. Regenerating the demo data needs the saved predictions that
+`linear.py` and `retune.py` write (run those first). To show other runs:
 
 ```bash
 python3 -m ecog_online.demo_export --gestures linear_logreg_glove \
