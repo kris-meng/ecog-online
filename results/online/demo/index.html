@@ -422,7 +422,7 @@ kbd { font-family: var(--font-data); font-size: 11.5px; border: 1px solid var(--
   const nOk = D.gestures.filter(g => g.result && g.result.correct).length;
   $('note').textContent =
     `Replay at recording speed of ${D.gestures.length} movements (${fmt(t0)}–${fmt(t1)}). Every value on screen was computed from the signal up to that moment, ` +
-    `by a model that never trained on that stretch of the recording (5-fold contiguous cross-validation). Gestures: ${D.meta.gesture_desc}, ` +
+    `by a model that never trained on that stretch of the recording (${D.meta.cv_desc}). Gestures: ${D.meta.gesture_desc}, ` +
     `detections fired after smoothing and a threshold tuned on held-back data; ${nOk} of ${D.gestures.length} movements detected with the right label. ` +
     `Open hand barely moves the glove and shows no high-gamma response on this grid, so the decoder often reads it as rest.`;
   $('finger-desc').textContent = D.meta.finger_desc;

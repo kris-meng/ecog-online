@@ -8,8 +8,8 @@
   regress   ridge from the same windows to the five glove channels (0-1 on training data),
             with the brain-to-glove lag (0-300 ms) and alpha chosen on inner folds.
 
-Development folds by default. `--final` trains on all development data and scores the
-held-out 20 % once; do not run it until the pipelines are frozen.
+Cross-validated on the first 72 trials, where the configurations were chosen;
+allcv.py re-runs the chosen ones over all 90 trials.
 
     python -m ecog_online.linear --task classify     -> results/online/linear_classify.json
     python -m ecog_online.linear --task regress      -> results/online/linear_regress.json
@@ -29,7 +29,7 @@ from .common import (OUT, WINDOW, Progress, ShrinkLDA, balanced_accuracy, confus
                      event_metrics, fold_features, inner_splits, make_logreg, merged,
                      regression_scores, ridge_path, runs, smooth, summarise_events, windows)
 from .features import Config
-from .protocol import CLASSES, FS, final_masks, fold_masks, load, sample_labels
+from .protocol import CLASSES, FS, fold_masks, load, sample_labels
 
 # --- config ---------------------------------------------------------------------------
 FOLDS = [0, 1, 2, 3, 4]
@@ -114,7 +114,7 @@ def classify(rec, folds, models, label_sets, log_name, window=WINDOW, tag="", cf
         prog.step(f"front end fold {fold}")
         X, valid = windows(feats, window)
         y_true = lab[ends]
-        tr, te = final_masks(ends, rec) if fold == "final" else fold_masks(ends, rec, fold)
+        tr, te = fold_masks(ends, rec, fold)
         tr, te = np.flatnonzero(tr & valid), np.flatnonzero(te & valid)
         for model, labels in itertools.product(models, label_sets):
             y_fit = y_true if labels == "glove" else cue[ends]
@@ -166,7 +166,7 @@ def classify(rec, folds, models, label_sets, log_name, window=WINDOW, tag="", cf
                                                float(np.std([f["events"]["false_per_min"] for f in fl]))],
             "folds": [{k: v for k, v in f.items() if k != "event_parts"} for f in fl],
         }
-        np.savez(OUT / "oof" / f"linear_{key.replace('/', '_')}{'_final' if 'final' in folds else ''}{tag}.npz",
+        np.savez(OUT / "oof" / f"linear_{key.replace('/', '_')}{tag}.npz",
                  **o)
     return out
 
@@ -180,7 +180,7 @@ def regress(rec, folds, log_name, window=WINDOW, tag="", cfg=Config()):
         feats, ends = fold_features(rec, fold, cfg)
         prog.step(f"front end fold {fold}")
         X, valid = windows(feats, window)
-        tr, te = final_masks(ends, rec) if fold == "final" else fold_masks(ends, rec, fold)
+        tr, te = fold_masks(ends, rec, fold)
         tr, te = np.flatnonzero(tr & valid), np.flatnonzero(te & valid)
         # glove target: mean over the 100 ms ending at (step end + lag), 0-1 on training rows
         n = rec.glove.shape[1]
@@ -219,7 +219,7 @@ def regress(rec, folds, log_name, window=WINDOW, tag="", cfg=Config()):
     o = {k: np.concatenate(v) for k, v in oof.items()}
     r, r2 = regression_scores(o["Y"], o["Yhat"])
     fingers = ["thumb", "index", "middle", "ring", "little"]
-    np.savez(OUT / "oof" / f"linear_ridge{'_final' if 'final' in folds else ''}{tag}.npz", **o)
+    np.savez(OUT / "oof" / f"linear_ridge{tag}.npz", **o)
     return {
         "pooled": {"r": dict(zip(fingers, r.round(4).tolist())), "r2": dict(zip(fingers, r2.round(4).tolist())),
                    "mean_r": float(r.mean()), "mean_r2": float(r2.mean())},
@@ -238,18 +238,15 @@ def main():
     ap.add_argument("--folds", type=int, nargs="*", default=FOLDS)
     ap.add_argument("--models", nargs="*", default=MODELS)
     ap.add_argument("--labels", nargs="*", default=LABELS)
-    ap.add_argument("--final", action="store_true", help="train on development, score held-out test ONCE")
     ap.add_argument("--tag", default="", help="suffix for the output files")
     ap.add_argument("--features", choices=list(FEATURES), default="default")
     ap.add_argument("--window", type=int, default=WINDOW, help="steps of 100 ms per decision (default 10 = 1.0 s)")
     args = ap.parse_args()
     (OUT / "oof").mkdir(parents=True, exist_ok=True)
-    folds = ["final"] if args.final else args.folds
-    if args.final:
-        print("*** FINAL: scoring the held-out test set ***", flush=True)
+    folds = args.folds
 
     rec = load(args.data)
-    name = f"linear_{args.task}{'_final' if args.final else ''}{args.tag}"
+    name = f"linear_{args.task}{args.tag}"
     cfg = FEATURES[args.features]
     config = {"folds": folds, "window_s": args.window / 10, "step_s": 0.1,
               "features": args.features, "bands": cfg.bands, "lmp": cfg.lmp}

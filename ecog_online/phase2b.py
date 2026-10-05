@@ -30,7 +30,7 @@ from sklearn.preprocessing import StandardScaler
 
 from .common import (OUT, Progress, balanced_accuracy, detect, event_metrics, fold_features,
                      merged, runs, smooth, summarise_events)
-from .protocol import FS, N_DEV_TRIALS, glove_events, load, sample_labels
+from .protocol import FS, N_SEARCH_TRIALS, glove_events, load, sample_labels
 
 # --- config ---------------------------------------------------------------------------
 TRANSITION_S = 0.25
@@ -131,12 +131,12 @@ def sweep(rec, info, lab, ends, log):
 
 def open_vs_rest(rec, info, log):
     """Cue-locked time course on development trials, front end fitted on development data."""
-    feats, ends = fold_features(rec, "final")
+    feats, ends = fold_features(rec, "search")
     hg = feats[:, 1:8].mean(axis=1)                                   # steps x 10 x 6
     flat = feats.reshape(len(feats), -1)
     lo, hi = int(round(LOCK[0] / 0.1)), int(round(LOCK[1] / 0.1))
     t = np.arange(lo, hi + 1) * 0.1
-    dev = [(c, s) for c, s, _ in rec.cues[:N_DEV_TRIALS]]
+    dev = [(c, s) for c, s, _ in rec.cues[:N_SEARCH_TRIALS]]
     j0 = np.array([int(np.searchsorted(ends, s)) for _, s in dev])
     cls = np.array([c for c, _ in dev])
     r_at = int(round(REST_AT / 0.1))

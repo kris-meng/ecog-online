@@ -1,7 +1,6 @@
 """Why the CNN fires fewer correct events, and whether post-processing fixes it. CV only.
 
-Works on saved out-of-fold probabilities; nothing is retrained and the held-out test is
-not touched. For each development fold, everything below is fitted on the OTHER four
+Works on saved out-of-fold probabilities; nothing is retrained. For each development fold, everything below is fitted on the OTHER four
 folds' out-of-fold predictions and applied to this fold:
 
   block      the event stage as before: tuned on the fold's own last 20 % block (from the

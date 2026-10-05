@@ -35,7 +35,7 @@ import numpy as np
 from .common import (OUT, Progress, ShrinkLDA, balanced_accuracy, confusion, events_on,
                      fold_features, merged, near_transition, regression_scores,
                      summarise_events, tune_capped, val_split)
-from .protocol import FS, final_masks, fold_masks, load, sample_labels
+from .protocol import FS, fold_masks, load, sample_labels
 
 # --- config ---------------------------------------------------------------------------
 WINDOW = 15
@@ -60,7 +60,7 @@ def fold_data(rec, fold):
     lab, info, _ = sample_labels(rec)
     y = lab[ends]
     g = np.stack([rec.glove[:, max(e - 119, 0): e + 1].mean(1) for e in ends]).astype(np.float32)
-    tr, te = final_masks(ends, rec) if fold == "final" else fold_masks(ends, rec, fold)
+    tr, te = fold_masks(ends, rec, fold)
     valid = np.arange(len(ends)) >= WINDOW - 1
     tr, te = np.flatnonzero(tr & valid), np.flatnonzero(te & valid)
     lo, hi = g[tr].min(0), g[tr].max(0)

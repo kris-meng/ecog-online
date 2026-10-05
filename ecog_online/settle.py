@@ -32,11 +32,6 @@ CV = {
     "cnn_v2 (A1, rest x2, smoothing 0.1)": [f"cnn_v2_A1_gesture_head_seed{s}" for s in range(3)],
     "offline design, async (c)": ["teammate_async:Pc"],
 }
-HELD_OUT = {
-    "logreg_1.0s": ["final/logreg_w10"],
-    "logreg_1.5s": ["final/logreg_w15"],
-    "cnn_A0.5": [f"final/cnn_A0.5_seed{s}" for s in range(5)],
-}
 
 
 def load_run(name):
@@ -44,7 +39,7 @@ def load_run(name):
         f, key = name.split(":")
         d = np.load(OUT / "oof" / f"{f}.npz")
         return d["steps"], d[key]
-    d = np.load(OUT / (name + ".npz") if name.startswith("final/") else OUT / "oof" / f"{name}.npz")
+    d = np.load(OUT / "oof" / f"{name}.npz")
     return d["steps"], d["P"]
 
 
@@ -109,7 +104,7 @@ def main():
     lab, info, _ = sample_labels(rec)
     _, ends = fold_features(rec, 0)
     out = {"config": {"hold_steps": HOLD, "hold_s": HOLD / 10, "decision": "raw per-step argmax"}}
-    for split, models in (("cv", CV), ("held_out", HELD_OUT)):
+    for split, models in (("cv", CV),):
         out[split] = {}
         for name, runs in models.items():
             try:

@@ -50,7 +50,6 @@ def main():
             "test_steps_per_class": {CLASSES[c]: int((lab[steps[te]] == c).sum()) for c in range(4)},
             "train_steps": int(tr.sum()), "purged_steps": int((~tr & ~te & (steps < rec.cut)).sum()),
         })
-    r["final_test_steps_per_class"] = {CLASSES[c]: int((lab[steps[steps >= rec.cut]] == c).sum()) for c in range(4)}
     print(json.dumps({k: v for k, v in r.items()}, indent=1))
 
     # fit the front end on fold 0's training samples, full recording

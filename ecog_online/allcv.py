@@ -138,12 +138,28 @@ def gated_metrics(P, steps, fold_of, ends, info, lab):
     return out
 
 
+def save_cnn(cdata, cnn_out):
+    """Per-seed and seed-averaged CNN gesture probabilities and finger outputs, all 90 trials."""
+    steps = np.concatenate([cdata[k][0] for k in range(N_BLOCKS)])
+    G = np.concatenate([cdata[k][1][cdata[k][0]] for k in range(N_BLOCKS)])
+    order = np.argsort(steps)
+    Ps, Fs = [], []
+    for s in CNN_SEEDS:
+        P = np.concatenate([cnn_out[(k, s)][0] for k in range(N_BLOCKS)])[order]
+        F_ = np.concatenate([cnn_out[(k, s)][1] for k in range(N_BLOCKS)])[order]
+        np.savez(OUT_DIR / f"cnn_A0.5_seed{s}.npz", steps=steps[order], P=P, F=F_, G=G[order])
+        Ps.append(P)
+        Fs.append(F_)
+    np.savez(OUT_DIR / "cnn_A0.5_ensemble.npz", steps=steps[order], P=np.mean(Ps, 0), F=np.mean(Fs, 0), G=G[order])
+
+
 # --- main -----------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--data", default=str(Path(__file__).resolve().parents[2] / "ECoG_Handpose.mat"))
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--only-cnn", action="store_true", help="train and save the CNN outputs only (for the demo)")
     args = ap.parse_args()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     rec = load(args.data)
@@ -207,6 +223,9 @@ def main():
             r = fu.result()
             cnn_out[r["key"][1:3]] = r["out"]["te"]
             prog.step(f"CNN block {r['key'][1]} seed {r['key'][2]}: {r['epochs']} epochs")
+    save_cnn(cdata, cnn_out)
+    if args.only_cnn:
+        return
 
     # the offline design: blocked, triggered and sliding
     T = {"steps": [], "Pb": [], "Pc": []}

@@ -18,7 +18,7 @@ Pipelines, all on the same contiguous folds, 1.5 s of history:
   D  CNN A0.5 alone
 
 Decision parameters are tuned per fold on the OTHER folds' out-of-fold output, under a
-false-activation cap. Development data only; the held-out test is not touched.
+false-activation cap. First 72 trials only.
 
     python -m ecog_online.gated     -> results/online/gated.json
 """

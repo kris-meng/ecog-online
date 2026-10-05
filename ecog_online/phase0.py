@@ -31,7 +31,7 @@ GLOVE_LP_HZ = 5.0            # glove smoothing before differentiation
 ONSET_K = 5.0                # onset threshold = median + K robust sd of pre-cue rest speed
 ONSET_MIN_S = 0.05           # ...and speed stays above it this long
 SEARCH_S = (0.0, 2.0)        # onset search window relative to the cue; release after cue end
-N_DEV_TRIALS = 72            # chronological split: first 72 trials develop, last 18 test
+N_SEARCH_TRIALS = 72         # configurations were chosen on the first 72 trials
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -127,13 +127,12 @@ def main():
         "first_cue_s": round(cues[0][1] / FS, 3), "last_cue_end_s": round(cues[-1][2] / FS, 3),
         "sequence": seq,
     }
-    dev_end, test_start = cues[N_DEV_TRIALS - 1][2], cues[N_DEV_TRIALS][1]
-    r["split"] = {"dev_trials": N_DEV_TRIALS, "test_trials": len(cues) - N_DEV_TRIALS,
+    dev_end, test_start = cues[N_SEARCH_TRIALS - 1][2], cues[N_SEARCH_TRIALS][1]
+    r["search_part"] = {"trials": N_SEARCH_TRIALS,
                   "cut_sample": int((dev_end + test_start) // 2),
                   "cut_s": round((dev_end + test_start) / 2 / FS, 3),
-                  "gap_at_cut_s": round((test_start - dev_end) / FS, 3),
-                  "test_per_class": {str(k): seq[N_DEV_TRIALS:].count(k) for k in (1, 2, 3)}}
-    print(f"cues {r['cues']}\nsplit {r['split']}")
+                  "gap_at_cut_s": round((test_start - dev_end) / FS, 3)}
+    print(f"cues {r['cues']}\nsearch part {r['search_part']}")
 
     # 3. channel quality on the high-passed signal, startup transient excluded
     b, a = butter(2, 0.5, btype="high", fs=FS)
@@ -192,9 +191,9 @@ def main():
     print(f"glove {r['glove']}")
 
     # 6. movement onsets from the glove (normalised on the dev part only)
-    dev = slice(0, r["split"]["cut_sample"])
+    dev = slice(0, r["search_part"]["cut_sample"])
     lo, hi = np.percentile(glove[:, dev], 1, axis=1), np.percentile(glove[:, dev], 99, axis=1)
-    ons, g, speed, thr = glove_onsets(glove, [s for _, s, _ in cues], [e for _, _, e in cues], lo, hi, N_DEV_TRIALS)
+    ons, g, speed, thr = glove_onsets(glove, [s for _, s, _ in cues], [e for _, _, e in cues], lo, hi, N_SEARCH_TRIALS)
     delay = np.array([(o["onset"] - s) / FS if o["onset"] is not None else np.nan
                       for o, (_, s, _) in zip(ons, cues)])
     rel = np.array([(o["release"] - e) / FS if o["release"] is not None else np.nan

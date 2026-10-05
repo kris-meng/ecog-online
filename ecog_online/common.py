@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from .features import Config, fit
-from .protocol import FS, PURGE_S, final_masks, fold_masks
+from .protocol import FS, PURGE_S, fold_masks, search_masks
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "results" / "online"
@@ -49,14 +49,14 @@ def cfg_key(cfg):
 
 
 def fold_features(rec, fold, cfg=Config()):
-    """Front end fitted on the training samples of `fold` (0-4 or "final"), cached on disk."""
+    """Front end fitted on the training samples of `fold` (0-4, or "search" for all of the first 72 trials), cached on disk."""
     CACHE.mkdir(parents=True, exist_ok=True)
     path = CACHE / f"{cfg_key(cfg)}_{fold}.npz"
     if path.exists():
         d = np.load(path)
         return d["feats"], d["ends"]
     samples = np.arange(rec.ecog.shape[1])
-    tr, _ = final_masks(samples, rec) if fold == "final" else fold_masks(samples, rec, fold)
+    tr, _ = search_masks(samples, rec) if fold == "search" else fold_masks(samples, rec, fold)
     _, feats, ends = fit(rec.ecog, tr, cfg)
     feats = feats.astype(np.float32)
     np.savez(path, feats=feats, ends=ends, cfg=repr(cfg))

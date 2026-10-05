@@ -29,7 +29,7 @@ from .common import (OUT, Progress, ShrinkLDA, balanced_accuracy, confusion, eve
                      fold_features, merged, near_transition, summarise_events, tune_capped,
                      val_split)
 from .features import Config
-from .protocol import FS, N_DEV_TRIALS, fold_masks, load, sample_labels
+from .protocol import FS, N_SEARCH_TRIALS, fold_masks, load, sample_labels
 
 # --- config ---------------------------------------------------------------------------
 BANDS = ((60, 90), (90, 120), (120, 150), (150, 180), (180, 210), (210, 240))   # their HIGH_GAMMA_6
@@ -77,8 +77,8 @@ def main():
         y = lab[ends]
 
         # (a) triggered: one sample per development trial at cue + 2.0 s
-        cue_step = np.array([int(np.searchsorted(ends, s + int(DECISION_S * FS))) for _, s, _ in rec.cues[:N_DEV_TRIALS]])
-        cls = np.array([c for c, _, _ in rec.cues[:N_DEV_TRIALS]])
+        cue_step = np.array([int(np.searchsorted(ends, s + int(DECISION_S * FS))) for _, s, _ in rec.cues[:N_SEARCH_TRIALS]])
+        cls = np.array([c for c, _, _ in rec.cues[:N_SEARCH_TRIALS]])
         in_tr, in_te = np.isin(cue_step, tr), np.isin(cue_step, te)
         m3 = ShrinkLDA().fit(X[cue_step[in_tr]], cls[in_tr])
         pa = m3.classes_[m3.decision_function(X[cue_step[in_te]]).argmax(1)]
