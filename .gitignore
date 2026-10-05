@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.mat
+*.rar
+results/online/cache/
+results/online/logs/
+results/online/*smoke*
+results/online/oof/*smoke*

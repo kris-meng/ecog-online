@@ -1,0 +1,400 @@
+{
+ "config": {
+  "folds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "window_s": 1.0,
+  "step_s": 0.1,
+  "features": "lmp",
+  "bands": [
+   [
+    13,
+    30
+   ],
+   [
+    55,
+    85
+   ],
+   [
+    85,
+    115
+   ],
+   [
+    115,
+    145
+   ],
+   [
+    155,
+    185
+   ],
+   [
+    185,
+    215
+   ],
+   [
+    215,
+    245
+   ],
+   [
+    255,
+    285
+   ]
+  ],
+  "lmp": true,
+  "models": [
+   "logreg"
+  ],
+  "labels": [
+   "glove"
+  ],
+  "logreg_C": 0.01,
+  "n_inner": 4,
+  "smoothers": [
+   [
+    "none",
+    0.0
+   ],
+   [
+    "ema",
+    0.5
+   ],
+   [
+    "ema",
+    0.7
+   ],
+   [
+    "ema",
+    0.85
+   ],
+   [
+    "hmm",
+    0.9
+   ],
+   [
+    "hmm",
+    0.95
+   ],
+   [
+    "hmm",
+    0.98
+   ]
+  ],
+  "thresholds": [
+   0.4,
+   0.5,
+   0.6,
+   0.7,
+   0.8
+  ],
+  "n_steps": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "fp_budget_per_min": 2.0
+ },
+ "results": {
+  "logreg/glove": {
+   "pooled": {
+    "bal_acc_raw": 0.6382013844196232,
+    "bal_acc_smoothed": 0.6395043322201296,
+    "bal_acc_merged_3class": 0.7802801321198323,
+    "confusion_raw": [
+     [
+      867,
+      63,
+      48,
+      281
+     ],
+     [
+      87,
+      536,
+      136,
+      27
+     ],
+     [
+      52,
+      105,
+      497,
+      16
+     ],
+     [
+      317,
+      28,
+      12,
+      281
+     ]
+    ],
+    "confusion_smoothed": [
+     [
+      853,
+      89,
+      89,
+      228
+     ],
+     [
+      101,
+      554,
+      97,
+      34
+     ],
+     [
+      53,
+      76,
+      501,
+      40
+     ],
+     [
+      331,
+      28,
+      6,
+      273
+     ]
+    ],
+    "events": {
+     "n_gestures": 72,
+     "correct_rate": 0.625,
+     "detected_rate": 0.7083333333333334,
+     "n_false": 5,
+     "rest_min": 2.098,
+     "false_per_min": 2.382843526608419,
+     "correct_rate_fist": 0.6153846153846154,
+     "correct_rate_peace": 0.5833333333333334,
+     "correct_rate_open": 0.6818181818181818,
+     "latency_s_median": 1.155,
+     "latency_s_median_fist_peace_glove_onset": 1.1416666666666666,
+     "correct_rate_fist_peace": 0.6
+    }
+   },
+   "per_fold_mean_sd": {
+    "bal_acc_raw": [
+     0.649653012493978,
+     0.0357759633425801
+    ],
+    "bal_acc_smoothed": [
+     0.6494385137221602,
+     0.040161725246091094
+    ],
+    "bal_acc_merged_3class": [
+     0.7879655719373329,
+     0.02974189311293467
+    ]
+   },
+   "per_fold_events_correct_mean_sd": [
+    0.621904761904762,
+    0.14561154174183916
+   ],
+   "per_fold_false_per_min_mean_sd": [
+    2.2847793149698217,
+    1.9683812530173186
+   ],
+   "folds": [
+    {
+     "fold": 0,
+     "tuned": {
+      "smoother": "ema",
+      "param": 0.5,
+      "thr": 0.7,
+      "n": 3,
+      "inner": {
+       "n_gestures": 57,
+       "correct_rate": 0.6842105263157895,
+       "detected_rate": 0.8070175438596491,
+       "n_false": 3,
+       "rest_min": 1.53,
+       "false_per_min": 1.96078431372549,
+       "correct_rate_fist": 0.8333333333333334,
+       "correct_rate_peace": 0.5294117647058824,
+       "correct_rate_open": 0.625,
+       "latency_s_median": 0.9,
+       "latency_s_median_fist_peace_glove_onset": 0.8758333333333334,
+       "correct_rate_fist_peace": 0.7073170731707317
+      }
+     },
+     "bal_acc_raw": 0.6541311717327032,
+     "bal_acc_smoothed": 0.6631939893811885,
+     "bal_acc_merged_3class": 0.8096097560975609,
+     "events": {
+      "n_gestures": 15,
+      "correct_rate": 0.7333333333333333,
+      "detected_rate": 0.8,
+      "n_false": 2,
+      "rest_min": 0.543,
+      "false_per_min": 3.6809815950920246,
+      "correct_rate_fist": 1.0,
+      "correct_rate_peace": 0.5714285714285714,
+      "correct_rate_open": 0.8333333333333334,
+      "latency_s_median": 1.0808333333333333,
+      "latency_s_median_fist_peace_glove_onset": 0.9,
+      "correct_rate_fist_peace": 0.6666666666666666
+     }
+    },
+    {
+     "fold": 1,
+     "tuned": {
+      "smoother": "ema",
+      "param": 0.7,
+      "thr": 0.6,
+      "n": 5,
+      "inner": {
+       "n_gestures": 56,
+       "correct_rate": 0.8392857142857143,
+       "detected_rate": 0.8571428571428571,
+       "n_false": 3,
+       "rest_min": 1.663,
+       "false_per_min": 1.8036072144288575,
+       "correct_rate_fist": 0.8571428571428571,
+       "correct_rate_peace": 0.8888888888888888,
+       "correct_rate_open": 0.7647058823529411,
+       "latency_s_median": 1.2408333333333332,
+       "latency_s_median_fist_peace_glove_onset": 1.1875,
+       "correct_rate_fist_peace": 0.8717948717948718
+      }
+     },
+     "bal_acc_raw": 0.6173807920767248,
+     "bal_acc_smoothed": 0.62598038828557,
+     "bal_acc_merged_3class": 0.7852094609133191,
+     "events": {
+      "n_gestures": 15,
+      "correct_rate": 0.7333333333333333,
+      "detected_rate": 0.9333333333333333,
+      "n_false": 2,
+      "rest_min": 0.412,
+      "false_per_min": 4.858299595141699,
+      "correct_rate_fist": 0.8,
+      "correct_rate_peace": 0.6,
+      "correct_rate_open": 0.8,
+      "latency_s_median": 0.8525,
+      "latency_s_median_fist_peace_glove_onset": 0.8658333333333333,
+      "correct_rate_fist_peace": 0.7
+     }
+    },
+    {
+     "fold": 2,
+     "tuned": {
+      "smoother": "ema",
+      "param": 0.7,
+      "thr": 0.6,
+      "n": 5,
+      "inner": {
+       "n_gestures": 57,
+       "correct_rate": 0.7192982456140351,
+       "detected_rate": 0.8596491228070176,
+       "n_false": 3,
+       "rest_min": 1.683,
+       "false_per_min": 1.782178217821782,
+       "correct_rate_fist": 0.5555555555555556,
+       "correct_rate_peace": 0.9047619047619048,
+       "correct_rate_open": 0.6666666666666666,
+       "latency_s_median": 1.1208333333333333,
+       "latency_s_median_fist_peace_glove_onset": 1.1558333333333333,
+       "correct_rate_fist_peace": 0.7435897435897436
+      }
+     },
+     "bal_acc_raw": 0.6317192948396113,
+     "bal_acc_smoothed": 0.660467454608728,
+     "bal_acc_merged_3class": 0.8297232365046753,
+     "events": {
+      "n_gestures": 14,
+      "correct_rate": 0.7142857142857143,
+      "detected_rate": 0.7857142857142857,
+      "n_false": 0,
+      "rest_min": 0.393,
+      "false_per_min": 0.0,
+      "correct_rate_fist": 0.8571428571428571,
+      "correct_rate_peace": 0.6666666666666666,
+      "correct_rate_open": 0.5,
+      "latency_s_median": 1.0075,
+      "latency_s_median_fist_peace_glove_onset": 1.1654166666666668,
+      "correct_rate_fist_peace": 0.8
+     }
+    },
+    {
+     "fold": 3,
+     "tuned": {
+      "smoother": "ema",
+      "param": 0.85,
+      "thr": 0.7,
+      "n": 2,
+      "inner": {
+       "n_gestures": 58,
+       "correct_rate": 0.5689655172413793,
+       "detected_rate": 0.6206896551724138,
+       "n_false": 1,
+       "rest_min": 1.727,
+       "false_per_min": 0.5791505791505791,
+       "correct_rate_fist": 0.5909090909090909,
+       "correct_rate_peace": 0.75,
+       "correct_rate_open": 0.3125,
+       "latency_s_median": 1.2858333333333334,
+       "latency_s_median_fist_peace_glove_onset": 1.3475000000000001,
+       "correct_rate_fist_peace": 0.6666666666666666
+      }
+     },
+     "bal_acc_raw": 0.6279584316874731,
+     "bal_acc_smoothed": 0.5887636732533521,
+     "bal_acc_merged_3class": 0.7441486511950992,
+     "events": {
+      "n_gestures": 14,
+      "correct_rate": 0.5714285714285714,
+      "detected_rate": 0.6428571428571429,
+      "n_false": 1,
+      "rest_min": 0.347,
+      "false_per_min": 2.8846153846153846,
+      "correct_rate_fist": 0.5,
+      "correct_rate_peace": 0.5,
+      "correct_rate_open": 0.6666666666666666,
+      "latency_s_median": 1.8020833333333335,
+      "latency_s_median_fist_peace_glove_onset": 1.97125,
+      "correct_rate_fist_peace": 0.5
+     }
+    },
+    {
+     "fold": 4,
+     "tuned": {
+      "smoother": "ema",
+      "param": 0.85,
+      "thr": 0.8,
+      "n": 1,
+      "inner": {
+       "n_gestures": 58,
+       "correct_rate": 0.3793103448275862,
+       "detected_rate": 0.3793103448275862,
+       "n_false": 1,
+       "rest_min": 1.688,
+       "false_per_min": 0.5923000987166831,
+       "correct_rate_fist": 0.3888888888888889,
+       "correct_rate_peace": 0.631578947368421,
+       "correct_rate_open": 0.14285714285714285,
+       "latency_s_median": 1.4775,
+       "latency_s_median_fist_peace_glove_onset": 1.6033333333333333,
+       "correct_rate_fist_peace": 0.5135135135135135
+      }
+     },
+     "bal_acc_raw": 0.7170753721333774,
+     "bal_acc_smoothed": 0.7087870630819627,
+     "bal_acc_merged_3class": 0.7711367549760094,
+     "events": {
+      "n_gestures": 14,
+      "correct_rate": 0.35714285714285715,
+      "detected_rate": 0.35714285714285715,
+      "n_false": 0,
+      "rest_min": 0.403,
+      "false_per_min": 0.0,
+      "correct_rate_fist": 0.25,
+      "correct_rate_peace": 0.6,
+      "correct_rate_open": 0.0,
+      "latency_s_median": 1.63,
+      "latency_s_median_fist_peace_glove_onset": 1.63,
+      "correct_rate_fist_peace": 0.38461538461538464
+     }
+    }
+   ]
+  }
+ }
+}

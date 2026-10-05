@@ -1,0 +1,755 @@
+{
+ "config": {
+  "window_steps": 15,
+  "bands": 8,
+  "parameters": 43545,
+  "hidden": 48,
+  "lr": 0.001,
+  "wd": 0.001,
+  "batch": 64,
+  "max_epochs": 100,
+  "patience": 10,
+  "aug": {
+   "jitter": 1,
+   "drop_cells": 0.1,
+   "band_scale": 0.1,
+   "noise": 0.05
+  },
+  "variants": {
+   "C": null
+  },
+  "folds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "b_inner": 3,
+  "b_steps": 5,
+  "max_epochs_cap": 0
+ },
+ "results": {
+  "C/gesture_head": {
+   "mean_sd_over_seeds": {
+    "bal_acc_raw": [
+     0.6065969005233679,
+     0.007672599638368104
+    ],
+    "bal_acc_smoothed": [
+     0.6053571655228001,
+     0.008099057899704913
+    ],
+    "bal_acc_no_transitions": [
+     0.6486978529363522,
+     0.012072599484569502
+    ],
+    "bal_acc_merged_3class": [
+     0.7164088044589673,
+     0.023574436104046307
+    ],
+    "bal_acc_merged_no_transitions": [
+     0.7570790461196859,
+     0.028833403787483777
+    ],
+    "events_correct_rate": [
+     0.5,
+     0.06313973007863823
+    ],
+    "events_false_per_min": [
+     3.6682615629984046,
+     0.9831601280652273
+    ],
+    "events_latency_s_median_fist_peace_glove_onset": [
+     0.6422222222222222,
+     0.12377844479173963
+    ],
+    "per_fold_bal_acc_smoothed": [
+     0.6051833906849043,
+     0.06188428461250414
+    ],
+    "cap_met_folds": [
+     5,
+     5,
+     5
+    ]
+   },
+   "seeds": [
+    {
+     "seed": 0,
+     "pooled": {
+      "bal_acc_raw": 0.6038677154009371,
+      "bal_acc_smoothed": 0.605824982846435,
+      "bal_acc_no_transitions": 0.6480051513747376,
+      "bal_acc_merged_3class": 0.6939053916758594,
+      "bal_acc_merged_no_transitions": 0.72953607846629,
+      "confusion_smoothed": [
+       [
+        745,
+        132,
+        56,
+        321
+       ],
+       [
+        63,
+        518,
+        171,
+        34
+       ],
+       [
+        37,
+        246,
+        365,
+        22
+       ],
+       [
+        196,
+        36,
+        7,
+        399
+       ]
+      ],
+      "events": {
+       "n_gestures": 72,
+       "correct_rate": 0.4305555555555556,
+       "detected_rate": 0.7916666666666666,
+       "n_false": 8,
+       "rest_min": 2.09,
+       "false_per_min": 3.8277511961722483,
+       "correct_rate_fist": 0.4230769230769231,
+       "correct_rate_peace": 0.2916666666666667,
+       "correct_rate_open": 0.5909090909090909,
+       "latency_s_median": 0.5208333333333334,
+       "latency_s_median_fist_peace_glove_onset": 0.46791666666666665,
+       "correct_rate_fist_peace": 0.36
+      },
+      "n_folds_cap_met": 5
+     },
+     "folds": [
+      {
+       "bal_acc_raw": 0.5703003125745083,
+       "bal_acc_smoothed": 0.5708618593598118,
+       "bal_acc_no_transitions": 0.5900275168134959,
+       "bal_acc_merged_3class": 0.6580931263858093,
+       "bal_acc_merged_no_transitions": 0.6745236106138361,
+       "events": {
+        "n_gestures": 15,
+        "correct_rate": 0.4,
+        "detected_rate": 0.6666666666666666,
+        "n_false": 4,
+        "rest_min": 0.535,
+        "false_per_min": 7.4766355140186915,
+        "correct_rate_fist": 0.5,
+        "correct_rate_peace": 0.2857142857142857,
+        "correct_rate_open": 0.5,
+        "latency_s_median": 1.4316666666666666,
+        "latency_s_median_fist_peace_glove_onset": 1.3908333333333334,
+        "correct_rate_fist_peace": 0.3333333333333333
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.3,
+        "thr": 0.7,
+        "n": 3,
+        "feasible": true,
+        "val_correct_rate": 0.6363636363636364,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7954166666666667
+       },
+       "fold": 0,
+       "epochs": 21,
+       "best_epoch": 11
+      },
+      {
+       "bal_acc_raw": 0.6657980409175565,
+       "bal_acc_smoothed": 0.6657980409175565,
+       "bal_acc_no_transitions": 0.7258781333046039,
+       "bal_acc_merged_3class": 0.7340431914858402,
+       "bal_acc_merged_no_transitions": 0.781699666167837,
+       "events": {
+        "n_gestures": 15,
+        "correct_rate": 0.6,
+        "detected_rate": 0.9333333333333333,
+        "n_false": 1,
+        "rest_min": 0.412,
+        "false_per_min": 2.4291497975708496,
+        "correct_rate_fist": 0.4,
+        "correct_rate_peace": 0.6,
+        "correct_rate_open": 0.8,
+        "latency_s_median": 0.36583333333333334,
+        "latency_s_median_fist_peace_glove_onset": 0.36583333333333334,
+        "correct_rate_fist_peace": 0.5
+       },
+       "tuned": {
+        "smoother": "none",
+        "param": 0.0,
+        "thr": 0.7,
+        "n": 2,
+        "feasible": true,
+        "val_correct_rate": 0.5454545454545454,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7583333333333333
+       },
+       "fold": 1,
+       "epochs": 22,
+       "best_epoch": 12
+      },
+      {
+       "bal_acc_raw": 0.5341595207664096,
+       "bal_acc_smoothed": 0.5377656016987733,
+       "bal_acc_no_transitions": 0.5765151080100689,
+       "bal_acc_merged_3class": 0.6946621337564501,
+       "bal_acc_merged_no_transitions": 0.7337687469762941,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.42857142857142855,
+        "detected_rate": 0.7857142857142857,
+        "n_false": 1,
+        "rest_min": 0.393,
+        "false_per_min": 2.542372881355932,
+        "correct_rate_fist": 0.5714285714285714,
+        "correct_rate_peace": 0.3333333333333333,
+        "correct_rate_open": 0.25,
+        "latency_s_median": 0.46791666666666665,
+        "latency_s_median_fist_peace_glove_onset": 0.46,
+        "correct_rate_fist_peace": 0.5
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.3,
+        "thr": 0.6,
+        "n": 3,
+        "feasible": true,
+        "val_correct_rate": 0.45454545454545453,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7970833333333334
+       },
+       "fold": 2,
+       "epochs": 21,
+       "best_epoch": 11
+      },
+      {
+       "bal_acc_raw": 0.6526797954233892,
+       "bal_acc_smoothed": 0.6526797954233892,
+       "bal_acc_no_transitions": 0.7074302693568749,
+       "bal_acc_merged_3class": 0.7454837235710476,
+       "bal_acc_merged_no_transitions": 0.7908432403185225,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.42857142857142855,
+        "detected_rate": 0.7142857142857143,
+        "n_false": 1,
+        "rest_min": 0.347,
+        "false_per_min": 2.8846153846153846,
+        "correct_rate_fist": 0.5,
+        "correct_rate_peace": 0.0,
+        "correct_rate_open": 0.6666666666666666,
+        "latency_s_median": 0.5575,
+        "latency_s_median_fist_peace_glove_onset": 0.46249999999999997,
+        "correct_rate_fist_peace": 0.25
+       },
+       "tuned": {
+        "smoother": "none",
+        "param": 0.0,
+        "thr": 0.7,
+        "n": 1,
+        "feasible": true,
+        "val_correct_rate": 0.6666666666666666,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.37166666666666665
+       },
+       "fold": 3,
+       "epochs": 20,
+       "best_epoch": 10
+      },
+      {
+       "bal_acc_raw": 0.6155410205046385,
+       "bal_acc_smoothed": 0.6266397857964798,
+       "bal_acc_no_transitions": 0.6690845834666782,
+       "bal_acc_merged_3class": 0.6584985454945324,
+       "bal_acc_merged_no_transitions": 0.7104937735829687,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.2857142857142857,
+        "detected_rate": 0.8571428571428571,
+        "n_false": 1,
+        "rest_min": 0.403,
+        "false_per_min": 2.4793388429752063,
+        "correct_rate_fist": 0.25,
+        "correct_rate_peace": 0.2,
+        "correct_rate_open": 1.0,
+        "latency_s_median": 0.68125,
+        "latency_s_median_fist_peace_glove_onset": 0.6216666666666667,
+        "correct_rate_fist_peace": 0.23076923076923078
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.5,
+        "thr": 0.7,
+        "n": 1,
+        "feasible": true,
+        "val_correct_rate": 0.5,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.5391666666666667
+       },
+       "fold": 4,
+       "epochs": 20,
+       "best_epoch": 10
+      }
+     ]
+    },
+    {
+     "seed": 1,
+     "pooled": {
+      "bal_acc_raw": 0.5988666132480128,
+      "bal_acc_smoothed": 0.5952122544642551,
+      "bal_acc_no_transitions": 0.6342705240508697,
+      "bal_acc_merged_3class": 0.7063572630636124,
+      "bal_acc_merged_no_transitions": 0.7448104366172285,
+      "confusion_smoothed": [
+       [
+        785,
+        108,
+        99,
+        262
+       ],
+       [
+        64,
+        538,
+        151,
+        33
+       ],
+       [
+        45,
+        219,
+        379,
+        27
+       ],
+       [
+        275,
+        21,
+        20,
+        322
+       ]
+      ],
+      "events": {
+       "n_gestures": 72,
+       "correct_rate": 0.4861111111111111,
+       "detected_rate": 0.7083333333333334,
+       "n_false": 5,
+       "rest_min": 2.09,
+       "false_per_min": 2.392344497607655,
+       "correct_rate_fist": 0.5769230769230769,
+       "correct_rate_peace": 0.4583333333333333,
+       "correct_rate_open": 0.4090909090909091,
+       "latency_s_median": 0.7391666666666666,
+       "latency_s_median_fist_peace_glove_onset": 0.7154166666666667,
+       "correct_rate_fist_peace": 0.52
+      },
+      "n_folds_cap_met": 5
+     },
+     "folds": [
+      {
+       "bal_acc_raw": 0.4764056355113986,
+       "bal_acc_smoothed": 0.4815745449591138,
+       "bal_acc_no_transitions": 0.49432431850921743,
+       "bal_acc_merged_3class": 0.5807505953847417,
+       "bal_acc_merged_no_transitions": 0.5911256315391654,
+       "events": {
+        "n_gestures": 15,
+        "correct_rate": 0.3333333333333333,
+        "detected_rate": 0.6666666666666666,
+        "n_false": 2,
+        "rest_min": 0.535,
+        "false_per_min": 3.7383177570093458,
+        "correct_rate_fist": 0.5,
+        "correct_rate_peace": 0.42857142857142855,
+        "correct_rate_open": 0.16666666666666666,
+        "latency_s_median": 0.8758333333333334,
+        "latency_s_median_fist_peace_glove_onset": 0.8333333333333334,
+        "correct_rate_fist_peace": 0.4444444444444444
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.3,
+        "thr": 0.7,
+        "n": 5,
+        "feasible": true,
+        "val_correct_rate": 0.9090909090909091,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7275
+       },
+       "fold": 0,
+       "epochs": 21,
+       "best_epoch": 11
+      },
+      {
+       "bal_acc_raw": 0.584475329297658,
+       "bal_acc_smoothed": 0.584475329297658,
+       "bal_acc_no_transitions": 0.6198717948717948,
+       "bal_acc_merged_3class": 0.745664506678584,
+       "bal_acc_merged_no_transitions": 0.7834311806914546,
+       "events": {
+        "n_gestures": 15,
+        "correct_rate": 0.4666666666666667,
+        "detected_rate": 0.6666666666666666,
+        "n_false": 0,
+        "rest_min": 0.412,
+        "false_per_min": 0.0,
+        "correct_rate_fist": 0.6,
+        "correct_rate_peace": 0.8,
+        "correct_rate_open": 0.0,
+        "latency_s_median": 0.2658333333333333,
+        "latency_s_median_fist_peace_glove_onset": 0.2658333333333333,
+        "correct_rate_fist_peace": 0.7
+       },
+       "tuned": {
+        "smoother": "none",
+        "param": 0.0,
+        "thr": 0.7,
+        "n": 2,
+        "feasible": true,
+        "val_correct_rate": 0.7272727272727273,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.6608333333333334
+       },
+       "fold": 1,
+       "epochs": 25,
+       "best_epoch": 15
+      },
+      {
+       "bal_acc_raw": 0.5698928909446843,
+       "bal_acc_smoothed": 0.5698928909446843,
+       "bal_acc_no_transitions": 0.6019078128540615,
+       "bal_acc_merged_3class": 0.6826943777673806,
+       "bal_acc_merged_no_transitions": 0.7207436169700321,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.5,
+        "detected_rate": 0.7142857142857143,
+        "n_false": 0,
+        "rest_min": 0.393,
+        "false_per_min": 0.0,
+        "correct_rate_fist": 0.7142857142857143,
+        "correct_rate_peace": 0.0,
+        "correct_rate_open": 0.5,
+        "latency_s_median": 0.7758333333333334,
+        "latency_s_median_fist_peace_glove_onset": 0.835,
+        "correct_rate_fist_peace": 0.5
+       },
+       "tuned": {
+        "smoother": "none",
+        "param": 0.0,
+        "thr": 0.8,
+        "n": 1,
+        "feasible": true,
+        "val_correct_rate": 0.6363636363636364,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7308333333333332
+       },
+       "fold": 2,
+       "epochs": 20,
+       "best_epoch": 10
+      },
+      {
+       "bal_acc_raw": 0.707757581380446,
+       "bal_acc_smoothed": 0.7002252512593385,
+       "bal_acc_no_transitions": 0.7648728267994324,
+       "bal_acc_merged_3class": 0.7996032962986227,
+       "bal_acc_merged_no_transitions": 0.8568431876134337,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.7142857142857143,
+        "detected_rate": 0.7142857142857143,
+        "n_false": 0,
+        "rest_min": 0.347,
+        "false_per_min": 0.0,
+        "correct_rate_fist": 0.75,
+        "correct_rate_peace": 0.5,
+        "correct_rate_open": 0.8333333333333334,
+        "latency_s_median": 0.74,
+        "latency_s_median_fist_peace_glove_onset": 0.6008333333333333,
+        "correct_rate_fist_peace": 0.625
+       },
+       "tuned": {
+        "smoother": "hmm",
+        "param": 0.98,
+        "thr": 0.9,
+        "n": 3,
+        "feasible": true,
+        "val_correct_rate": 0.75,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7291666666666667
+       },
+       "fold": 3,
+       "epochs": 21,
+       "best_epoch": 11
+      },
+      {
+       "bal_acc_raw": 0.5785118566535173,
+       "bal_acc_smoothed": 0.5985375902372447,
+       "bal_acc_no_transitions": 0.6452227898736786,
+       "bal_acc_merged_3class": 0.6597699572354137,
+       "bal_acc_merged_no_transitions": 0.7089053209430295,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.42857142857142855,
+        "detected_rate": 0.7857142857142857,
+        "n_false": 3,
+        "rest_min": 0.403,
+        "false_per_min": 7.438016528925619,
+        "correct_rate_fist": 0.375,
+        "correct_rate_peace": 0.4,
+        "correct_rate_open": 1.0,
+        "latency_s_median": 0.7616666666666667,
+        "latency_s_median_fist_peace_glove_onset": 0.795,
+        "correct_rate_fist_peace": 0.38461538461538464
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.85,
+        "thr": 0.5,
+        "n": 2,
+        "feasible": true,
+        "val_correct_rate": 0.5833333333333334,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.72
+       },
+       "fold": 4,
+       "epochs": 25,
+       "best_epoch": 15
+      }
+     ]
+    },
+    {
+     "seed": 2,
+     "pooled": {
+      "bal_acc_raw": 0.6170563729211538,
+      "bal_acc_smoothed": 0.6150342592577102,
+      "bal_acc_no_transitions": 0.6638178833834493,
+      "bal_acc_merged_3class": 0.74896375863743,
+      "bal_acc_merged_no_transitions": 0.7968906232755391,
+      "confusion_smoothed": [
+       [
+        768,
+        140,
+        70,
+        276
+       ],
+       [
+        77,
+        542,
+        141,
+        26
+       ],
+       [
+        40,
+        138,
+        463,
+        29
+       ],
+       [
+        297,
+        33,
+        10,
+        298
+       ]
+      ],
+      "events": {
+       "n_gestures": 72,
+       "correct_rate": 0.5833333333333334,
+       "detected_rate": 0.7777777777777778,
+       "n_false": 10,
+       "rest_min": 2.09,
+       "false_per_min": 4.78468899521531,
+       "correct_rate_fist": 0.6538461538461539,
+       "correct_rate_peace": 0.5416666666666666,
+       "correct_rate_open": 0.5454545454545454,
+       "latency_s_median": 0.7250000000000001,
+       "latency_s_median_fist_peace_glove_onset": 0.7433333333333334,
+       "correct_rate_fist_peace": 0.6
+      },
+      "n_folds_cap_met": 5
+     },
+     "folds": [
+      {
+       "bal_acc_raw": 0.5216343873880247,
+       "bal_acc_smoothed": 0.5480556123237674,
+       "bal_acc_no_transitions": 0.5704302523579237,
+       "bal_acc_merged_3class": 0.6527428759136077,
+       "bal_acc_merged_no_transitions": 0.6606446672236145,
+       "events": {
+        "n_gestures": 15,
+        "correct_rate": 0.4666666666666667,
+        "detected_rate": 0.7333333333333333,
+        "n_false": 4,
+        "rest_min": 0.535,
+        "false_per_min": 7.4766355140186915,
+        "correct_rate_fist": 0.5,
+        "correct_rate_peace": 0.2857142857142857,
+        "correct_rate_open": 0.6666666666666666,
+        "latency_s_median": 0.6725,
+        "latency_s_median_fist_peace_glove_onset": 0.6725,
+        "correct_rate_fist_peace": 0.3333333333333333
+       },
+       "tuned": {
+        "smoother": "hmm",
+        "param": 0.9,
+        "thr": 0.4,
+        "n": 5,
+        "feasible": true,
+        "val_correct_rate": 0.45454545454545453,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.6870833333333333
+       },
+       "fold": 0,
+       "epochs": 16,
+       "best_epoch": 6
+      },
+      {
+       "bal_acc_raw": 0.6757774489160358,
+       "bal_acc_smoothed": 0.700085152206544,
+       "bal_acc_no_transitions": 0.7799232385261796,
+       "bal_acc_merged_3class": 0.7731640101295993,
+       "bal_acc_merged_no_transitions": 0.8433243160277811,
+       "events": {
+        "n_gestures": 15,
+        "correct_rate": 0.6,
+        "detected_rate": 0.9333333333333333,
+        "n_false": 0,
+        "rest_min": 0.412,
+        "false_per_min": 0.0,
+        "correct_rate_fist": 0.2,
+        "correct_rate_peace": 0.6,
+        "correct_rate_open": 1.0,
+        "latency_s_median": 0.7658333333333334,
+        "latency_s_median_fist_peace_glove_onset": 0.79625,
+        "correct_rate_fist_peace": 0.4
+       },
+       "tuned": {
+        "smoother": "hmm",
+        "param": 0.9,
+        "thr": 0.5,
+        "n": 5,
+        "feasible": true,
+        "val_correct_rate": 0.2727272727272727,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7466666666666666
+       },
+       "fold": 1,
+       "epochs": 24,
+       "best_epoch": 14
+      },
+      {
+       "bal_acc_raw": 0.5932408795365279,
+       "bal_acc_smoothed": 0.5897222655610919,
+       "bal_acc_no_transitions": 0.6251380975625097,
+       "bal_acc_merged_3class": 0.778327086596554,
+       "bal_acc_merged_no_transitions": 0.8156864100260327,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.5,
+        "detected_rate": 0.6428571428571429,
+        "n_false": 3,
+        "rest_min": 0.393,
+        "false_per_min": 7.627118644067796,
+        "correct_rate_fist": 0.7142857142857143,
+        "correct_rate_peace": 0.3333333333333333,
+        "correct_rate_open": 0.25,
+        "latency_s_median": 0.5408333333333334,
+        "latency_s_median_fist_peace_glove_onset": 0.52625,
+        "correct_rate_fist_peace": 0.6
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.3,
+        "thr": 0.6,
+        "n": 1,
+        "feasible": true,
+        "val_correct_rate": 0.45454545454545453,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7191666666666666
+       },
+       "fold": 2,
+       "epochs": 19,
+       "best_epoch": 9
+      },
+      {
+       "bal_acc_raw": 0.6166857037694985,
+       "bal_acc_smoothed": 0.5711816540124434,
+       "bal_acc_no_transitions": 0.6225390817133937,
+       "bal_acc_merged_3class": 0.7533287517196446,
+       "bal_acc_merged_no_transitions": 0.8131721863158732,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.5,
+        "detected_rate": 0.6428571428571429,
+        "n_false": 2,
+        "rest_min": 0.347,
+        "false_per_min": 5.769230769230769,
+        "correct_rate_fist": 0.75,
+        "correct_rate_peace": 0.75,
+        "correct_rate_open": 0.16666666666666666,
+        "latency_s_median": 0.49916666666666665,
+        "latency_s_median_fist_peace_glove_onset": 0.49666666666666665,
+        "correct_rate_fist_peace": 0.75
+       },
+       "tuned": {
+        "smoother": "hmm",
+        "param": 0.9,
+        "thr": 0.9,
+        "n": 2,
+        "feasible": true,
+        "val_correct_rate": 0.8333333333333334,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.6283333333333333
+       },
+       "fold": 3,
+       "epochs": 20,
+       "best_epoch": 10
+      },
+      {
+       "bal_acc_raw": 0.6470678030296363,
+       "bal_acc_smoothed": 0.680255486275668,
+       "bal_acc_no_transitions": 0.713587824813462,
+       "bal_acc_merged_3class": 0.8013298390517126,
+       "bal_acc_merged_no_transitions": 0.8646389318978152,
+       "events": {
+        "n_gestures": 14,
+        "correct_rate": 0.8571428571428571,
+        "detected_rate": 0.9285714285714286,
+        "n_false": 1,
+        "rest_min": 0.403,
+        "false_per_min": 2.4793388429752063,
+        "correct_rate_fist": 0.875,
+        "correct_rate_peace": 0.8,
+        "correct_rate_open": 1.0,
+        "latency_s_median": 0.7904166666666668,
+        "latency_s_median_fist_peace_glove_onset": 0.795,
+        "correct_rate_fist_peace": 0.8461538461538461
+       },
+       "tuned": {
+        "smoother": "ema",
+        "param": 0.3,
+        "thr": 0.6,
+        "n": 5,
+        "feasible": true,
+        "val_correct_rate": 0.6666666666666666,
+        "val_false_per_min": 0.0,
+        "val_delay_s": 0.7
+       },
+       "fold": 4,
+       "epochs": 20,
+       "best_epoch": 10
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,660 @@
+{
+ "config": {
+  "train": "72 development trials, 0-338.2 s",
+  "test": "18 trials, 338.2-422.5 s",
+  "test_classes": {
+   "fist": 4,
+   "peace": 6,
+   "open": 8
+  },
+  "logreg_C": 0.01,
+  "cnn_seeds": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "cnn_lambda": 0.5,
+  "event_tuning": "last 20 % of development, <= 2 false/min and <= 0.8 s delay"
+ },
+ "logreg_1.0s": {
+  "bal_acc_raw": 0.5712451927702873,
+  "bal_acc_smoothed": 0.5714736126956825,
+  "bal_acc_no_transitions": 0.6070004714944991,
+  "bal_acc_merged_3class": 0.7554131600479238,
+  "confusion_smoothed": [
+   [
+    219,
+    16,
+    23,
+    71
+   ],
+   [
+    15,
+    89,
+    7,
+    11
+   ],
+   [
+    13,
+    50,
+    97,
+    0
+   ],
+   [
+    166,
+    0,
+    0,
+    66
+   ]
+  ],
+  "events": {
+   "n_gestures": 18,
+   "correct_rate": 0.7222222222222222,
+   "detected_rate": 0.8888888888888888,
+   "n_false": 4,
+   "rest_min": 0.548,
+   "false_per_min": 7.2948328267477205,
+   "correct_rate_fist": 0.5,
+   "correct_rate_peace": 0.8333333333333334,
+   "correct_rate_open": 0.75,
+   "latency_s_median": 0.6816666666666666,
+   "latency_s_median_fist_peace_glove_onset": 0.6816666666666666,
+   "correct_rate_fist_peace": 0.7
+  },
+  "tuned": {
+   "smoother": "ema",
+   "param": 0.5,
+   "thr": 0.4,
+   "n": 5,
+   "feasible": true,
+   "val_correct_rate": 0.6,
+   "val_false_per_min": 0.0,
+   "val_delay_s": 0.8
+  }
+ },
+ "logreg_1.5s": {
+  "bal_acc_raw": 0.5771683489375448,
+  "bal_acc_smoothed": 0.5771683489375448,
+  "bal_acc_no_transitions": 0.6062887299052862,
+  "bal_acc_merged_3class": 0.7490536999698042,
+  "confusion_smoothed": [
+   [
+    207,
+    12,
+    23,
+    87
+   ],
+   [
+    20,
+    87,
+    5,
+    10
+   ],
+   [
+    15,
+    49,
+    96,
+    0
+   ],
+   [
+    145,
+    2,
+    0,
+    85
+   ]
+  ],
+  "events": {
+   "n_gestures": 18,
+   "correct_rate": 0.5555555555555556,
+   "detected_rate": 0.8333333333333334,
+   "n_false": 5,
+   "rest_min": 0.548,
+   "false_per_min": 9.118541033434651,
+   "correct_rate_fist": 0.5,
+   "correct_rate_peace": 0.5,
+   "correct_rate_open": 0.625,
+   "latency_s_median": 0.46624999999999994,
+   "latency_s_median_fist_peace_glove_onset": 0.5316666666666666,
+   "correct_rate_fist_peace": 0.5
+  },
+  "tuned": {
+   "smoother": "none",
+   "param": 0.0,
+   "thr": 0.8,
+   "n": 1,
+   "feasible": true,
+   "val_correct_rate": 0.6,
+   "val_false_per_min": 0.0,
+   "val_delay_s": 0.7608333333333334
+  }
+ },
+ "teammate": {
+  "a_triggered_3class": {
+   "accuracy": 0.9444444444444444,
+   "n_trials": 18,
+   "confusion": [
+    [
+     4,
+     0,
+     0
+    ],
+    [
+     1,
+     5,
+     0
+    ],
+    [
+     0,
+     0,
+     8
+    ]
+   ]
+  },
+  "b_as_trained_sliding": {
+   "bal_acc": 0.37876536885245904,
+   "confusion": [
+    [
+     0,
+     33,
+     41,
+     255
+    ],
+    [
+     0,
+     27,
+     6,
+     89
+    ],
+    [
+     0,
+     7,
+     47,
+     106
+    ],
+    [
+     0,
+     0,
+     0,
+     232
+    ]
+   ]
+  },
+  "c_async_with_rest": {
+   "bal_acc_raw": 0.4540128609100328,
+   "bal_acc_smoothed": 0.45735310968108306,
+   "bal_acc_no_transitions": 0.48065800057920816,
+   "bal_acc_merged_3class": 0.587106540330986,
+   "confusion_smoothed": [
+    [
+     151,
+     32,
+     40,
+     106
+    ],
+    [
+     24,
+     57,
+     18,
+     23
+    ],
+    [
+     27,
+     47,
+     79,
+     7
+    ],
+    [
+     97,
+     18,
+     22,
+     95
+    ]
+   ],
+   "events": {
+    "n_gestures": 18,
+    "correct_rate": 0.3888888888888889,
+    "detected_rate": 0.7777777777777778,
+    "n_false": 6,
+    "rest_min": 0.548,
+    "false_per_min": 10.94224924012158,
+    "correct_rate_fist": 0.5,
+    "correct_rate_peace": 0.16666666666666666,
+    "correct_rate_open": 0.5,
+    "latency_s_median": 0.42583333333333334,
+    "latency_s_median_fist_peace_glove_onset": 1.4316666666666666,
+    "correct_rate_fist_peace": 0.3
+   },
+   "tuned": {
+    "smoother": "ema",
+    "param": 0.7,
+    "thr": 0.8,
+    "n": 2,
+    "feasible": false,
+    "val_correct_rate": 0.3333333333333333,
+    "val_false_per_min": 0.0,
+    "val_delay_s": 0.9308333333333334
+   }
+  }
+ },
+ "cnn_A0.5": {
+  "mean_sd_over_seeds": {
+   "bal_acc_raw": [
+    0.6483238371798329,
+    0.01560561494675852
+   ],
+   "bal_acc_smoothed": [
+    0.6366902081139036,
+    0.026248203524639552
+   ],
+   "bal_acc_no_transitions": [
+    0.6841461578868524,
+    0.02902382227240898
+   ],
+   "bal_acc_merged_3class": [
+    0.7694315503151087,
+    0.02923912842656934
+   ],
+   "mean_r": [
+    0.7598000786712215,
+    0.026305102046374415
+   ],
+   "mean_r2": [
+    0.3871603012084961,
+    0.05355141112105805
+   ],
+   "events_correct_rate": [
+    0.4666666666666667,
+    0.11439589045541113
+   ],
+   "events_false_per_min": [
+    2.5531914893617023,
+    2.4737981701368756
+   ],
+   "events_latency_s_median_fist_peace_glove_onset": [
+    0.7450833333333333,
+    0.043177926459399746
+   ],
+   "events_n_false": [
+    0,
+    3,
+    3,
+    0,
+    1
+   ]
+  },
+  "seeds": [
+   {
+    "bal_acc_raw": 0.6239755172241972,
+    "bal_acc_smoothed": 0.6239755172241972,
+    "bal_acc_no_transitions": 0.6739021882381353,
+    "bal_acc_merged_3class": 0.7555156190643172,
+    "confusion_smoothed": [
+     [
+      132,
+      25,
+      14,
+      158
+     ],
+     [
+      5,
+      102,
+      10,
+      5
+     ],
+     [
+      2,
+      67,
+      80,
+      11
+     ],
+     [
+      56,
+      0,
+      0,
+      176
+     ]
+    ],
+    "events": {
+     "n_gestures": 18,
+     "correct_rate": 0.2777777777777778,
+     "detected_rate": 0.5555555555555556,
+     "n_false": 0,
+     "rest_min": 0.548,
+     "false_per_min": 0.0,
+     "correct_rate_fist": 0.75,
+     "correct_rate_peace": 0.16666666666666666,
+     "correct_rate_open": 0.125,
+     "latency_s_median": 0.7258333333333333,
+     "latency_s_median_fist_peace_glove_onset": 0.7379166666666667,
+     "correct_rate_fist_peace": 0.4
+    },
+    "tuned": {
+     "smoother": "none",
+     "param": 0.0,
+     "thr": 0.8,
+     "n": 2,
+     "feasible": true,
+     "val_correct_rate": 0.8666666666666667,
+     "val_false_per_min": 0.0,
+     "val_delay_s": 0.695
+    },
+    "seed": 0,
+    "epochs": 20,
+    "r": [
+     0.7905,
+     0.6832,
+     0.6971,
+     0.8604,
+     0.7828
+    ],
+    "r2": [
+     0.39489999413490295,
+     0.275299996137619,
+     0.38089999556541443,
+     0.7389000058174133,
+     0.188400000333786
+    ],
+    "mean_r": 0.7628005590995868,
+    "mean_r2": 0.3956834375858307
+   },
+   {
+    "bal_acc_raw": 0.6544110695256538,
+    "bal_acc_smoothed": 0.5937067950699397,
+    "bal_acc_no_transitions": 0.6370145968570692,
+    "bal_acc_merged_3class": 0.731248538908857,
+    "confusion_smoothed": [
+     [
+      224,
+      37,
+      26,
+      42
+     ],
+     [
+      28,
+      93,
+      1,
+      0
+     ],
+     [
+      18,
+      48,
+      87,
+      7
+     ],
+     [
+      142,
+      0,
+      0,
+      90
+     ]
+    ],
+    "events": {
+     "n_gestures": 18,
+     "correct_rate": 0.5555555555555556,
+     "detected_rate": 0.7777777777777778,
+     "n_false": 3,
+     "rest_min": 0.548,
+     "false_per_min": 5.47112462006079,
+     "correct_rate_fist": 0.75,
+     "correct_rate_peace": 0.3333333333333333,
+     "correct_rate_open": 0.625,
+     "latency_s_median": 0.68125,
+     "latency_s_median_fist_peace_glove_onset": 0.6966666666666667,
+     "correct_rate_fist_peace": 0.5
+    },
+    "tuned": {
+     "smoother": "ema",
+     "param": 0.85,
+     "thr": 0.5,
+     "n": 1,
+     "feasible": true,
+     "val_correct_rate": 0.8,
+     "val_false_per_min": 0.0,
+     "val_delay_s": 0.7666666666666666
+    },
+    "seed": 1,
+    "epochs": 23,
+    "r": [
+     0.7003,
+     0.6647,
+     0.6345,
+     0.877,
+     0.76
+    ],
+    "r2": [
+     0.2637999951839447,
+     0.21410000324249268,
+     0.15870000422000885,
+     0.7641000151634216,
+     0.06769999861717224
+    ],
+    "mean_r": 0.7273001151188493,
+    "mean_r2": 0.29368478059768677
+   },
+   {
+    "bal_acc_raw": 0.6696218332313861,
+    "bal_acc_smoothed": 0.6696218332313861,
+    "bal_acc_no_transitions": 0.71956727596525,
+    "bal_acc_merged_3class": 0.8169988822652757,
+    "confusion_smoothed": [
+     [
+      191,
+      28,
+      21,
+      89
+     ],
+     [
+      9,
+      105,
+      4,
+      4
+     ],
+     [
+      9,
+      38,
+      109,
+      4
+     ],
+     [
+      101,
+      2,
+      0,
+      129
+     ]
+    ],
+    "events": {
+     "n_gestures": 18,
+     "correct_rate": 0.6111111111111112,
+     "detected_rate": 0.8333333333333334,
+     "n_false": 3,
+     "rest_min": 0.548,
+     "false_per_min": 5.47112462006079,
+     "correct_rate_fist": 0.5,
+     "correct_rate_peace": 0.3333333333333333,
+     "correct_rate_open": 0.875,
+     "latency_s_median": 0.6816666666666666,
+     "latency_s_median_fist_peace_glove_onset": 0.7391666666666666,
+     "correct_rate_fist_peace": 0.4
+    },
+    "tuned": {
+     "smoother": "none",
+     "param": 0.0,
+     "thr": 0.5,
+     "n": 5,
+     "feasible": true,
+     "val_correct_rate": 0.7333333333333333,
+     "val_false_per_min": 0.0,
+     "val_delay_s": 0.6716666666666666
+    },
+    "seed": 2,
+    "epochs": 25,
+    "r": [
+     0.7307,
+     0.763,
+     0.7645,
+     0.8828,
+     0.819
+    ],
+    "r2": [
+     0.44359999895095825,
+     0.46309998631477356,
+     0.3490999937057495,
+     0.7670000195503235,
+     0.14810000360012054
+    ],
+    "mean_r": 0.7920012324621949,
+    "mean_r2": 0.43418240547180176
+   },
+   {
+    "bal_acc_raw": 0.6387566263846625,
+    "bal_acc_smoothed": 0.6412927555107294,
+    "bal_acc_no_transitions": 0.6811602947714355,
+    "bal_acc_merged_3class": 0.7849283578309615,
+    "confusion_smoothed": [
+     [
+      204,
+      21,
+      19,
+      85
+     ],
+     [
+      10,
+      101,
+      8,
+      3
+     ],
+     [
+      4,
+      54,
+      96,
+      6
+     ],
+     [
+      111,
+      0,
+      1,
+      120
+     ]
+    ],
+    "events": {
+     "n_gestures": 18,
+     "correct_rate": 0.4444444444444444,
+     "detected_rate": 0.6666666666666666,
+     "n_false": 0,
+     "rest_min": 0.548,
+     "false_per_min": 0.0,
+     "correct_rate_fist": 0.5,
+     "correct_rate_peace": 0.5,
+     "correct_rate_open": 0.375,
+     "latency_s_median": 0.8295833333333333,
+     "latency_s_median_fist_peace_glove_onset": 0.8258333333333333,
+     "correct_rate_fist_peace": 0.5
+    },
+    "tuned": {
+     "smoother": "ema",
+     "param": 0.3,
+     "thr": 0.9,
+     "n": 1,
+     "feasible": true,
+     "val_correct_rate": 0.9333333333333333,
+     "val_false_per_min": 0.0,
+     "val_delay_s": 0.795
+    },
+    "seed": 3,
+    "epochs": 32,
+    "r": [
+     0.7669,
+     0.7239,
+     0.7317,
+     0.8862,
+     0.8137
+    ],
+    "r2": [
+     0.4650999903678894,
+     0.3700999915599823,
+     0.37059998512268066,
+     0.7803000211715698,
+     0.2249000072479248
+    ],
+    "mean_r": 0.784468252129178,
+    "mean_r2": 0.4421672224998474
+   },
+   {
+    "bal_acc_raw": 0.6548541395332654,
+    "bal_acc_smoothed": 0.6548541395332654,
+    "bal_acc_no_transitions": 0.7090864336023713,
+    "bal_acc_merged_3class": 0.7584663535061317,
+    "confusion_smoothed": [
+     [
+      193,
+      10,
+      28,
+      98
+     ],
+     [
+      16,
+      96,
+      5,
+      5
+     ],
+     [
+      9,
+      58,
+      89,
+      4
+     ],
+     [
+      72,
+      0,
+      0,
+      160
+     ]
+    ],
+    "events": {
+     "n_gestures": 18,
+     "correct_rate": 0.4444444444444444,
+     "detected_rate": 0.6666666666666666,
+     "n_false": 1,
+     "rest_min": 0.548,
+     "false_per_min": 1.8237082066869301,
+     "correct_rate_fist": 0.75,
+     "correct_rate_peace": 0.3333333333333333,
+     "correct_rate_open": 0.375,
+     "latency_s_median": 0.70375,
+     "latency_s_median_fist_peace_glove_onset": 0.7258333333333333,
+     "correct_rate_fist_peace": 0.5
+    },
+    "tuned": {
+     "smoother": "none",
+     "param": 0.0,
+     "thr": 0.8,
+     "n": 2,
+     "feasible": true,
+     "val_correct_rate": 0.8,
+     "val_false_per_min": 0.0,
+     "val_delay_s": 0.7
+    },
+    "seed": 4,
+    "epochs": 24,
+    "r": [
+     0.7265,
+     0.6932,
+     0.6871,
+     0.8371,
+     0.7183
+    ],
+    "r2": [
+     0.37610000371932983,
+     0.33570000529289246,
+     0.30070000886917114,
+     0.6992999911308289,
+     0.13860000669956207
+    ],
+    "mean_r": 0.7324302345462985,
+    "mean_r2": 0.37008365988731384
+   }
+  ]
+ }
+}

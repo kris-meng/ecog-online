@@ -1,0 +1,431 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ECoG Hand Decoder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an instrument panel for a projector. Two hands on top, the decoder's readout and
+   the electrode grid below, a scrolling label timeline and a full-recording scrub bar at the foot. */
+:root {
+  color-scheme: dark;
+  --bg: #0f141b;
+  --panel: #161d26;
+  --line: #263140;
+  --ink: #e6ecf2;
+  --ink-2: #9aa8b7;
+  --ink-3: #657384;
+  --rest: #4a5666;
+  --fist: #d95926;
+  --peace: #199e70;
+  --open: #3987e5;
+  --hand-true: #c8b49f;
+  --hand-dec: #9db6cf;
+  --hot: #d95926;
+  --cold: #3987e5;
+  --font-display: "Barlow Semi Condensed", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px;
+  padding-inline: 16px; padding-block: 10px 14px; box-sizing: border-box;
+}
+* { box-sizing: border-box; }
+.wrap { max-width: 1440px; margin: 0 auto; display: grid; gap: 10px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: 26px; letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
+.sub { color: var(--ink-2); font-size: 13.5px; max-width: 75ch; }
+.clock { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 22px; color: var(--ink); }
+.clock small { color: var(--ink-3); font-size: 12px; margin-left: 6px; }
+.label { font-family: var(--font-display); font-weight: 600; font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
+
+.hands { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hand { position: relative; padding: 0; overflow: hidden; }
+.hand canvas { display: block; width: 100%; height: clamp(200px, 36vh, 400px); }
+.hand .cap { position: absolute; left: 12px; top: 10px; display: grid; gap: 2px; pointer-events: none; }
+.hand .cap b { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+.fingers { position: absolute; left: 12px; right: 12px; bottom: 10px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; pointer-events: none; }
+.fingers div { display: grid; gap: 3px; }
+.fingers span { font-family: var(--font-data); font-size: 11px; color: var(--ink-3); }
+.fingers i { display: block; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.fingers i u { display: block; height: 100%; width: 0; background: var(--ink-2); text-decoration: none; }
+
+.mid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.55fr); gap: 12px; }
+@media (max-width: 1000px) { .mid { grid-template-columns: 1fr 1fr; } .mid .timeline { grid-column: 1 / -1; order: 3; } }
+.verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; align-items: start; }
+.verdict .big { font-family: var(--font-display); font-weight: 700; font-size: 30px; line-height: 1.05; display: flex; align-items: center; gap: 10px; }
+.chip { width: 14px; height: 14px; border-radius: 3px; background: var(--rest); flex: none; }
+.match { grid-column: 1 / -1; font-family: var(--font-data); font-size: 13px; color: var(--ink-2); min-height: 1.4em; }
+.match b { color: var(--ink); font-weight: 500; }
+.probs { display: grid; gap: 7px; margin-top: 4px; grid-column: 1 / -1; }
+.prob { display: grid; grid-template-columns: 52px 1fr 44px; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-2); }
+.prob .bar { height: 10px; background: var(--bg); border-radius: 3px; overflow: hidden; position: relative; }
+.prob .bar u { position: absolute; inset: 0 auto 0 0; width: 0; text-decoration: none; border-radius: 3px; }
+.prob .bar s { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); opacity: 0.55; text-decoration: none; }
+.prob em { font-style: normal; font-family: var(--font-data); font-variant-numeric: tabular-nums; text-align: right; color: var(--ink); }
+
+
+.gridwrap { display: grid; justify-items: center; gap: 8px; }
+#heat { width: min(100%, 150px); aspect-ratio: 6 / 10; max-width: 100%; }
+.scale { display: flex; align-items: center; gap: 6px; font-family: var(--font-data); font-size: 11px; color: var(--ink-3); }
+.scale i { width: 90px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--cold), var(--rest), var(--hot)); }
+
+.timeline { position: relative; }
+.timeline canvas { display: block; width: 100%; height: 92px; }
+#overview { display: block; width: 100%; height: 26px; cursor: pointer; margin-top: 4px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--ink-2); margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button {
+  font: 500 13.5px var(--font-body); color: var(--ink); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--ink-3); }
+button:focus-visible { outline: 2px solid var(--open); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--line); }
+button.play { min-width: 92px; font-weight: 600; }
+.sep { width: 1px; align-self: stretch; background: var(--line); margin: 0 4px; }
+.note { color: var(--ink-3); font-size: 12.5px; max-width: 95ch; line-height: 1.5; }
+kbd { font-family: var(--font-data); font-size: 11.5px; border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; color: var(--ink-2); }
+
+@media (max-width: 600px) {
+  .hands, .mid { grid-template-columns: 1fr; }
+  .verdict .big { font-size: 26px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>ECoG Hand Decoder</h1>
+      <div class="sub">Rock-paper-scissors from a 60-electrode grid over right sensorimotor cortex, decoded every 100&nbsp;ms with no trial triggers.</div>
+    </div>
+    <div class="clock" id="clock">0:00.0<small>/ 0:00</small></div>
+  </header>
+
+  <section class="hands">
+    <div class="panel hand">
+      <canvas id="hand-true" aria-label="Hand posture measured by the data glove"></canvas>
+      <div class="cap"><span class="label">Measured</span><b>Data glove</b></div>
+      <div class="fingers" id="fing-true"></div>
+    </div>
+    <div class="panel hand">
+      <canvas id="hand-dec" aria-label="Hand posture decoded from ECoG"></canvas>
+      <div class="cap"><span class="label">Decoded from ECoG</span><b id="finger-desc">Ridge</b></div>
+      <div class="fingers" id="fing-dec"></div>
+    </div>
+  </section>
+
+  <section class="mid">
+    <div class="panel verdict" aria-live="off">
+      <div><div class="label">True movement</div><div class="big"><span class="chip" id="chip-true"></span><span id="txt-true">Rest</span></div></div>
+      <div><div class="label">Decoder says</div><div class="big"><span class="chip" id="chip-dec"></span><span id="txt-dec">Rest</span></div></div>
+      <div class="match" id="match"></div>
+      <div class="probs" id="probs"></div>
+    </div>
+    <div class="panel timeline">
+      <div class="label" style="margin-bottom:6px">Last 12 seconds</div>
+      <canvas id="tl"></canvas>
+      <div class="label" style="margin-top:10px">Whole recording · click to jump</div>
+      <canvas id="overview" aria-label="Whole recording. Click to jump."></canvas>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="panel gridpanel">
+      <div class="gridwrap">
+        <div class="label">High-gamma, 55–285&nbsp;Hz</div>
+        <canvas id="heat" aria-label="High-gamma power on the 10 by 6 electrode grid"></canvas>
+        <div class="scale"><span>−2</span><i></i><span>+2&nbsp;z</span></div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="controls">
+    <button class="play" id="play" type="button">▶ Play</button>
+    <span class="sep"></span>
+    <button type="button" data-speed="0.5" id="sp-05">0.5×</button>
+    <button type="button" data-speed="1" id="sp-1" aria-pressed="true">1×</button>
+    <button type="button" data-speed="2" id="sp-2">2×</button>
+    <button type="button" data-speed="4" id="sp-4">4×</button>
+    <span class="sep"></span>
+    <button type="button" data-jump="1" id="j-fist">Next fist</button>
+    <button type="button" data-jump="2" id="j-peace">Next peace</button>
+    <button type="button" data-jump="3" id="j-open">Next open hand</button>
+    <span class="note"><kbd>space</kbd> play / pause · <kbd>←</kbd> <kbd>→</kbd> 5&nbsp;s</span>
+  </div>
+
+  <p class="note" id="note"></p>
+</div>
+
+<script src="three.min.js"></script>
+<script src="demo_data.js"></script>
+<script>
+(() => {
+  const D = window.DEMO;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const COLORS = [css('--rest'), css('--fist'), css('--peace'), css('--open')];
+  const NAMES = ['Rest', 'Fist', 'Peace', 'Open hand'];
+  const SHORT = ['rest', 'fist', 'peace', 'open'];
+  const T = D.t, N = T.length, t0 = D.meta.t0, t1 = D.meta.t1, GHZ = D.meta.glove_hz;
+
+  // --- lookups ------------------------------------------------------------------------
+  function stepAt(t) {                       // last decision made at or before t (causal hold)
+    let lo = 0, hi = N - 1;
+    if (t < T[0]) return -1;
+    while (lo < hi) { const m = (lo + hi + 1) >> 1; if (T[m] <= t) lo = m; else hi = m - 1; }
+    return lo;
+  }
+  const gloveAt = t => D.glove[Math.max(0, Math.min(D.glove.length - 1, Math.floor((t - t0) * GHZ)))];
+  const argmax = a => a.reduce((b, v, i) => v > a[b] ? i : b, 0);
+  const fmt = t => { const m = Math.floor(t / 60), s = t - 60 * m; return `${m}:${s.toFixed(1).padStart(4, '0')}`; };
+
+  // each true gesture: the first fired event inside [onset - 0.5 s, end] decides it
+  for (const g of D.gestures) {
+    const e = D.events.find(e => e.t >= g.onset - 0.5 && e.t <= g.end);
+    g.result = e ? { correct: e.class === g.class, delay: e.t - g.onset, t: e.t } : null;
+  }
+
+  // --- 3D hands ------------------------------------------------------------------------
+  function makeHand(canvas, color) {
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+    camera.position.set(4.5, 2.2, 11.5);
+    camera.lookAt(0, 1.6, 0);
+    scene.add(new THREE.HemisphereLight(0xdfe8f2, 0x1a2230, 0.85));
+    const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(5, 8, 9); scene.add(key);
+    const rim = new THREE.DirectionalLight(0x9db6cf, 0.35); rim.position.set(-6, 3, -4); scene.add(rim);
+    const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(color), roughness: 0.6, metalness: 0.04 });
+    const hand = new THREE.Group(); scene.add(hand);
+    hand.rotation.y = -0.15;
+    const palm = new THREE.Mesh(new THREE.BoxGeometry(3.5, 3.7, 1.05), mat);
+    palm.position.y = 0; hand.add(palm);
+    const wrist = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.35, 1.6, 24), mat);
+    wrist.position.y = -2.6; wrist.scale.z = 0.55; hand.add(wrist);
+
+    function chain(parent, lengths, radius) {     // returns the joints, base first
+      const joints = [];
+      let p = parent;
+      for (const L of lengths) {
+        const j = new THREE.Group(); p.add(j);
+        const knuckle = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.04, 16, 12), mat); j.add(knuckle);
+        const seg = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.92, radius, L, 16), mat);
+        seg.position.y = L / 2; j.add(seg);
+        const next = new THREE.Group(); next.position.y = L; j.add(next);
+        joints.push(j); p = next;
+      }
+      const tip = new THREE.Mesh(new THREE.SphereGeometry(radius * 0.92, 16, 12), mat); p.add(tip);
+      return joints;
+    }
+    const spec = [                                // x on the palm, phalanx lengths, radius
+      [-1.25, [1.35, 0.85, 0.65], 0.33],          // index
+      [-0.42, [1.5, 0.95, 0.7], 0.34],            // middle
+      [0.42, [1.4, 0.9, 0.65], 0.32],             // ring
+      [1.22, [1.1, 0.7, 0.55], 0.28],             // little
+    ];
+    const fingers = spec.map(([x, Ls, r]) => {
+      const base = new THREE.Group(); base.position.set(x, 1.85, 0); hand.add(base);
+      return chain(base, Ls, r);
+    });
+    const thumbBase = new THREE.Group();
+    thumbBase.position.set(-1.75, -0.9, 0.25);
+    thumbBase.rotation.z = 0.75;                  // points up and out from the palm
+    hand.add(thumbBase);
+    const thumbYaw = new THREE.Group(); thumbBase.add(thumbYaw);
+    const thumb = chain(thumbYaw, [1.1, 0.85, 0.65], 0.36);
+
+    function pose(f) {                            // f: five flexions in 0..1, thumb first
+      const c = v => Math.max(0, Math.min(1, v));
+      // the glove's thumb channel reads high at rest and low in a fist; the thumb curls as it falls
+      const th = c(1 - f[0]);
+      thumbYaw.rotation.y = -0.9 * th;
+      thumb[0].rotation.x = 0.35 * th; thumb[1].rotation.x = 0.9 * th; thumb[2].rotation.x = 0.8 * th;
+      fingers.forEach((j, i) => {
+        const v = c(f[i + 1]);
+        j[0].rotation.x = 1.45 * v; j[1].rotation.x = 1.65 * v; j[2].rotation.x = 1.05 * v;
+      });
+    }
+    function resize() {
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    }
+    new ResizeObserver(resize).observe(canvas); resize();
+    return { pose, render: () => renderer.render(scene, camera) };
+  }
+
+  const handTrue = makeHand(document.getElementById('hand-true'), css('--hand-true'));
+  const handDec = makeHand(document.getElementById('hand-dec'), css('--hand-dec'));
+
+  function fingerBars(id) {
+    const el = document.getElementById(id);
+    el.innerHTML = D.meta.fingers.map(n => `<div><span>${n}</span><i><u></u></i></div>`).join('');
+    return [...el.querySelectorAll('u')];
+  }
+  const barsTrue = fingerBars('fing-true'), barsDec = fingerBars('fing-dec');
+
+  // --- probability bars ----------------------------------------------------------------
+  const probsEl = document.getElementById('probs');
+  probsEl.innerHTML = SHORT.map((n, k) =>
+    `<div class="prob"><span>${n}</span><span class="bar"><u style="background:${COLORS[k]}"></u><s></s></span><em>0.00</em></div>`).join('');
+  const probRows = [...probsEl.querySelectorAll('.prob')].map(r => ({ fill: r.querySelector('u'), raw: r.querySelector('s'), num: r.querySelector('em') }));
+
+  document.getElementById('legend').innerHTML =
+    SHORT.map((n, k) => `<span><span class="chip" style="background:${COLORS[k]}"></span>${n}</span>`).join('') +
+    `<span>✓ right gesture</span><span>✗ wrong gesture or false alarm</span>`;
+
+  // --- electrode grid --------------------------------------------------------------------
+  const heat = document.getElementById('heat'), hctx = heat.getContext('2d');
+  const mix = (a, b, u) => { const p = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16));
+    const A = p(a), B = p(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * u)).join(',')})`; };
+  function drawHeat(i) {
+    const dpr = window.devicePixelRatio || 1, w = heat.clientWidth, h = heat.clientHeight;
+    heat.width = w * dpr; heat.height = h * dpr; hctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    hctx.clearRect(0, 0, w, h);
+    const cw = w / 6, ch = h / 10, g = i >= 0 ? D.grid[i] : null;
+    for (let r = 0; r < 10; r++) for (let c = 0; c < 6; c++) {
+      const z = g ? Math.max(-2, Math.min(2, g[r * 6 + c])) : 0;
+      hctx.fillStyle = z >= 0 ? mix(COLORS[0], css('--hot'), z / 2) : mix(COLORS[0], css('--cold'), -z / 2);
+      hctx.beginPath(); hctx.roundRect ? hctx.roundRect(c * cw + 2, r * ch + 2, cw - 4, ch - 4, 3) : hctx.rect(c * cw + 2, r * ch + 2, cw - 4, ch - 4);
+      hctx.fill();
+    }
+    hctx.fillStyle = css('--ink'); hctx.font = `500 10px ${css('--font-data')}`; hctx.textBaseline = 'top';
+    for (const [k, r, c] of [[1, 0, 0], [10, 9, 0], [51, 0, 5], [60, 9, 5]]) hctx.fillText(k, c * cw + 5, r * ch + 4);
+  }
+
+  // --- timeline and overview ------------------------------------------------------------
+  const tl = document.getElementById('tl'), tctx = tl.getContext('2d');
+  const ov = document.getElementById('overview'), octx = ov.getContext('2d');
+  const predAt = i => argmax(D.s[i]);
+  function fit(cv, ctx) {
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return [w, h];
+  }
+  const WIN = 12;
+  function drawTimeline(t) {
+    const [w, h] = fit(tl, tctx);
+    tctx.clearRect(0, 0, w, h);
+    const a = t - WIN * 0.8, b = t + WIN * 0.2, x = v => (v - a) / (b - a) * w;
+    const rowT = [8, 30], rowP = [44, 30];
+    tctx.fillStyle = css('--bg');
+    tctx.fillRect(0, rowT[0], w, rowT[1]); tctx.fillRect(0, rowP[0], w, rowP[1]);
+    for (const g of D.gestures) {
+      if (g.end < a || g.onset > b) continue;
+      tctx.fillStyle = COLORS[g.class];
+      tctx.fillRect(x(g.onset), rowT[0], x(g.end) - x(g.onset), rowT[1]);
+      tctx.fillStyle = css('--ink-3'); tctx.fillRect(x(g.cue), rowT[0] - 4, 1.5, rowT[1] + 4);
+    }
+    const iA = Math.max(0, stepAt(a)), iN = stepAt(t);
+    for (let i = iA; i <= iN; i++) {
+      const k = predAt(i); if (!k) continue;
+      tctx.fillStyle = COLORS[k];
+      tctx.fillRect(x(T[i] - 0.1), rowP[0], Math.max(1, x(T[i]) - x(T[i] - 0.1) + 0.5), rowP[1]);
+    }
+    tctx.font = `600 13px ${css('--font-body')}`; tctx.textAlign = 'center'; tctx.textBaseline = 'top';
+    for (const e of D.events) {
+      if (e.t < a || e.t > t) continue;
+      tctx.fillStyle = css('--ink');
+      tctx.fillRect(x(e.t) - 1, rowP[0], 2, rowP[1]);
+      tctx.fillText(e.correct ? '✓' : '✗', x(e.t), rowP[0] + rowP[1] + 2);
+    }
+    tctx.fillStyle = css('--ink-3'); tctx.font = `500 10px ${css('--font-data')}`; tctx.textAlign = 'left'; tctx.textBaseline = 'middle';
+    tctx.fillText('TRUE', 4, rowT[0] + rowT[1] / 2); tctx.fillText('DECODED', 4, rowP[0] + rowP[1] / 2);
+    tctx.textBaseline = 'top';
+    tctx.fillStyle = css('--ink'); tctx.fillRect(x(t) - 1, 2, 2, h - 18);
+    tctx.fillStyle = css('--ink-3'); tctx.font = `400 11px ${css('--font-data')}`; tctx.textAlign = 'left';
+    tctx.fillText('now', x(t) + 5, 0);
+  }
+  function drawOverview(t) {
+    const [w, h] = fit(ov, octx);
+    octx.clearRect(0, 0, w, h);
+    const x = v => (v - t0) / (t1 - t0) * w;
+    octx.fillStyle = css('--bg'); octx.fillRect(0, 6, w, h - 12);
+    for (const g of D.gestures) { octx.fillStyle = COLORS[g.class]; octx.fillRect(x(g.onset), 6, Math.max(1, x(g.end) - x(g.onset)), h - 12); }
+    octx.fillStyle = css('--ink'); octx.fillRect(x(t) - 1, 0, 2, h);
+  }
+
+  // --- readouts -------------------------------------------------------------------------
+  const $ = id => document.getElementById(id);
+  function trueAt(t) { return D.gestures.find(g => t >= g.onset && t < g.end) || null; }
+  function setBig(chip, txt, k) { chip.style.background = COLORS[k]; txt.textContent = NAMES[k]; }
+  function readouts(t, i) {
+    const g = trueAt(t), kt = g ? g.class : 0;
+    setBig($('chip-true'), $('txt-true'), kt);
+    const kp = i >= 0 ? predAt(i) : 0;
+    setBig($('chip-dec'), $('txt-dec'), kp);
+    for (let k = 0; k < 4; k++) {
+      const s = i >= 0 ? D.s[i][k] : 0, p = i >= 0 ? D.p[i][k] : 0;
+      probRows[k].fill.style.width = `${(s * 100).toFixed(1)}%`;
+      probRows[k].raw.style.left = `calc(${(p * 100).toFixed(1)}% - 1px)`;
+      probRows[k].num.textContent = s.toFixed(2);
+    }
+    let m = '';
+    if (g) {
+      const r = g.result;
+      if (r && r.t <= t) m = r.correct ? `<b>✓ ${SHORT[g.class]}</b> detected ${r.delay.toFixed(2)} s after movement onset${g.from_glove ? '' : ' (onset estimated from the cue)'}`
+                                       : `<b>✗</b> detected as a different gesture`;
+      else if (t > g.onset + 0.5 && !r) m = `<b>✗</b> not detected yet`;
+      else m = `movement started ${(t - g.onset).toFixed(1)} s ago`;
+    } else m = kp ? `decoder output without a true movement` : `rest`;
+    $('match').innerHTML = m;
+
+  }
+
+  // --- playback -------------------------------------------------------------------------
+  const first = D.gestures.find(g => g.class === 1 && g.result && g.result.correct) || D.gestures[0];
+  let t = Math.max(t0, first.onset - 2.5), playing = false, speed = 1, last = null;
+  const decShown = [0, 0, 0, 0, 0];
+  function frame(now) {
+    if (playing && last !== null) t = Math.min(t1, t + (now - last) / 1000 * speed);
+    if (t >= t1) playing = false, $('play').textContent = '▶ Play';
+    last = now;
+    const i = stepAt(t);
+    const gv = gloveAt(t), dv = i >= 0 ? D.fingers[i] : [1, 0, 0, 0, 0];
+    // display-only easing toward the latest decoded value; it never looks ahead
+    for (let k = 0; k < 5; k++) decShown[k] += (dv[k] - decShown[k]) * (playing ? 0.25 : 1);
+    handTrue.pose(gv); handDec.pose(decShown);
+    handTrue.render(); handDec.render();
+    barsTrue.forEach((u, k) => u.style.width = `${Math.max(0, Math.min(1, gv[k])) * 100}%`);
+    barsDec.forEach((u, k) => u.style.width = `${Math.max(0, Math.min(1, decShown[k])) * 100}%`);
+    readouts(t, i); drawHeat(i); drawTimeline(t); drawOverview(t);
+    $('clock').innerHTML = `${fmt(t)}<small>/ ${fmt(t1)}</small>`;
+    requestAnimationFrame(frame);
+  }
+  function seek(v) { t = Math.max(t0, Math.min(t1, v)); }
+  $('play').addEventListener('click', () => { playing = !playing; if (t >= t1) t = t0; $('play').textContent = playing ? '❚❚ Pause' : '▶ Play'; });
+  document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => {
+    speed = +b.dataset.speed;
+    document.querySelectorAll('[data-speed]').forEach(o => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+  }));
+  document.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', () => {
+    const k = +b.dataset.jump;
+    const g = D.gestures.find(g => g.class === k && g.onset > t + 1) || D.gestures.find(g => g.class === k);
+    if (g) seek(g.onset - 2);
+  }));
+  let dragging = false;
+  const ovSeek = e => { const r = ov.getBoundingClientRect(); seek(t0 + (e.clientX - r.left) / r.width * (t1 - t0)); };
+  ov.addEventListener('pointerdown', e => { dragging = true; ov.setPointerCapture(e.pointerId); ovSeek(e); });
+  ov.addEventListener('pointermove', e => dragging && ovSeek(e));
+  ov.addEventListener('pointerup', () => dragging = false);
+  window.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('button') && e.code === 'Space') return;
+    if (e.code === 'Space') { e.preventDefault(); $('play').click(); }
+    if (e.code === 'ArrowRight') seek(t + 5);
+    if (e.code === 'ArrowLeft') seek(t - 5);
+  });
+
+  const nOk = D.gestures.filter(g => g.result && g.result.correct).length;
+  $('note').textContent =
+    `Replay at recording speed of ${D.gestures.length} movements (${fmt(t0)}–${fmt(t1)}). Every value on screen was computed from the signal up to that moment, ` +
+    `by a model that never trained on that stretch of the recording (5-fold contiguous cross-validation). Gestures: ${D.meta.gesture_desc}, ` +
+    `detections fired after smoothing and a threshold tuned on held-back data; ${nOk} of ${D.gestures.length} movements detected with the right label. ` +
+    `Open hand barely moves the glove and shows no high-gamma response on this grid, so the decoder often reads it as rest.`;
+  $('finger-desc').textContent = D.meta.finger_desc;
+  requestAnimationFrame(frame);
+})();
+</script>
